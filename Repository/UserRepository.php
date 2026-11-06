@@ -27,8 +27,8 @@ final class UserRepository
 
         try {
             $existEmail = $this->findByEmail($user->getEmail());
-            if($existEmail === null){
-                throw new RuntimeException("Email does not exist");
+            if($existEmail !== null){
+                throw new RuntimeException("Email is already exist");
             }
 
             $stmt = $this->pdo->prepare($sql);

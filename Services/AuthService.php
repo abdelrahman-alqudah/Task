@@ -51,7 +51,7 @@ final class AuthService{
             throw new RuntimeException("Password is required.");
         }
         $user= $this->userRepository->findByEmail($loginDto->email);
-        if($user === null){
+        if($user == null){
             throw new RuntimeException("User not found.");
         }
 

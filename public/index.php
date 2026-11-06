@@ -10,7 +10,7 @@ use Task1\Services\TokenService;
 use Task1\Repository\UserRepository;
 use Task1\Database\DbConnection;
 use Task1\Redis\RedisConnection;
-
+use Task1\DTO\RegisterDto;
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->safeLoad();
 
@@ -43,6 +43,33 @@ if ($path === '/api/login' && $method === 'POST') {
             'message' => $e->getMessage()
         ]);
     }
+}
+
+else if ($path === '/api/register' && $method === 'POST') {
+    $rawInput = file_get_contents('php://input');
+    $data = json_decode($rawInput, true) ?? [];
+
+    try {
+        $register = RegisterDto::fromArray($data);
+
+
+        $dbConnection = new DbConnection();
+        $userRepository = new UserRepository($dbConnection);
+        $redisConnection = new RedisConnection();
+        $tokenService = new TokenService($redisConnection);
+        $authService = new AuthService($userRepository, $tokenService);
+        $authController = new AuthController($authService);
+
+        $authController->register($register);
+
+    } catch (InvalidArgumentException $e) {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ]);
+    }
 } else {
     http_response_code(405);
     header('Content-Type: application/json');
@@ -51,3 +78,4 @@ if ($path === '/api/login' && $method === 'POST') {
         'message' => 'Method Not Allowed'
     ]);
 }
+

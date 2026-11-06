@@ -1,2 +1,62 @@
+version: '3.8'
+
 services:
-  
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: task1_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    environment:
+      - APP_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-task1_db}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - task1-net
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: task1_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-task1_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - task1-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: task1_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - task1-net
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  task1-net:
+    driver: bridge
