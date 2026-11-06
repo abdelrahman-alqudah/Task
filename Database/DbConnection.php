@@ -14,7 +14,7 @@ final class DBConnection{
 
         $host     = $_ENV['DB_HOST'] ?? 'localhost';
         $port     = $_ENV['DB_PORT'] ?? '5432';
-        $username = $_ENV['DB_USERNAME'] ?? '';
+        $username = $_ENV['DB_USER'] ?? '';
         $password = $_ENV['DB_PASSWORD'] ?? '';
         $database = $_ENV['DB_DATABASE'] ?? '';
 

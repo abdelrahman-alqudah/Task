@@ -1,14 +1,12 @@
 <?php
 
 namespace Task1\Redis;
-require_once 'vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use Exception;
 use Predis\Client as PredisClient;
 use RuntimeException;
 
-require 'vendor/autoload.php';
 
 final class RedisConnection
 {

@@ -5,7 +5,7 @@ namespace Task1\Services;
 use Exception;
 use RuntimeException;
 use Task1\Repository\UserRepository;
-use Task1\Dto\RegisterDto;
+use Task1\DTO\RegisterDto;
 use Task1\DTO\LoginDto;
 use DateTimeImmutable;
 use Task1\Models\User;

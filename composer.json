@@ -4,5 +4,11 @@
         "vlucas/phpdotenv": "^5.8",
         "predis/predis": "^3.7",
         "firebase/php-jwt": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Task1\\": ""
+        }
     }
 }
+

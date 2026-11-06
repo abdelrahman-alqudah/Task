@@ -129,7 +129,7 @@ final class UserRepository
 
     public function updateUser(User $user): bool
     {
-        if ($user === null) {
+        if ($user == null) {
             error_log("Database error while updating user: " . $user->getId());
             throw new RuntimeException("User id is not set.");
         }

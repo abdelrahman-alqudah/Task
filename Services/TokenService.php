@@ -5,6 +5,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Exception;
 use Throwable;
+use Task1\Models\User;
 use RuntimeException;
 use Dotenv\Dotenv;
 use Task1\Redis\RedisConnection;
@@ -14,7 +15,7 @@ final class TokenService{
     public function __construct(private readonly RedisConnection $redisConnection )
     {
     }
-    public function createToken($user){
+    public function createToken(User $user){
         $issuedAt = time();
         $ttl = (int) ($_ENV['JWT_EXPIRES_IN'] ?? 3600);
         $expirationTime = $issuedAt + $ttl;
