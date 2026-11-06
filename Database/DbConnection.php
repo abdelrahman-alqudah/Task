@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 
 namespace Task1\Database;
-use Dotenv\Dotenv;
 use PDO;
 use RuntimeException;
 use Exception;
