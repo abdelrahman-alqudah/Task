@@ -55,7 +55,7 @@ final class TokenService{
         if ($userId === null) {
             return null;
         }
-        $storedToken = $this->redisConnection->getClient()->get("user:token :{$userId}");
+        $storedToken = $this->redisConnection->getClient()->get("user:token:{$userId}");
         if($storedToken !== $jwt){
             return null;
         }

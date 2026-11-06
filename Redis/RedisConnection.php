@@ -18,10 +18,6 @@ final class RedisConnection
     public function __construct()
     {
 
-        $rootPath = dirname(__DIR__, 2);
-        $dotenv = Dotenv::createImmutable($rootPath);
-        try {
-            $dotenv->safeLoad();
             $host = $_ENV['Redis_Host'] ?? '127.0.0.1';
             $port = (int)($_ENV['Redis_Port'] ?? 6379);
             $scheme = $_ENV['Redis_scheme'] ?? 'tcp';
@@ -29,10 +25,7 @@ final class RedisConnection
                 'scheme' => $scheme,
                 'host' => $host,
                 'port' => $port,]);
-        } catch (Exception $e) {
-            error_log("Couldn't load Dot env: " . $e->getMessage());
-            throw new RuntimeException("Couldn't load Dot env: " . $e->getMessage());
-        }
+
     }
 
     public function getClient(): PredisClient

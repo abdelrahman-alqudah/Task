@@ -12,15 +12,6 @@ use PDOException;
 final class DBConnection{
     private PDO $connection;
     public function __construct(){
-        $rootPath = dirname(__DIR__, 2);
-        $dotenv = Dotenv::createImmutable($rootPath);
-        try{
-            $dotenv->safeLoad();
-        }
-        catch(Exception $e){
-            error_log("Couldn't load the environment: " .$e->getMessage());
-            throw new RuntimeException('Unable to load the environment');
-        }
 
         $host     = $_ENV['DB_HOST'] ?? 'localhost';
         $port     = $_ENV['DB_PORT'] ?? '5432';
