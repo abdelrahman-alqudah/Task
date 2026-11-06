@@ -29,15 +29,18 @@ final class TokenService{
                 'email' => $user->getEmail(),
             ]
         ];
-        return JWT::encode(
+        $token = JWT::encode(
             $payload,
             $_ENV['JWT_SECRET'],
             'HS256'
         );
+        $this->storeTokenSession($user->getId(), $token);
+        return $token;
     }
-    public function storeTokenSession(string $userId, string $token, int $ttl): void
+    public function storeTokenSession(string $userId, string $token): void
     {
         $redisClient = $this->redisConnection->getClient();
+        $ttl = $_ENV["JWT_EXPIRES_IN"] ?? 3600;
 
         $redisClient->setex("user:token:{$userId}", $ttl, $token);
     }
