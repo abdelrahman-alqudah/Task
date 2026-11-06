@@ -21,13 +21,19 @@ final class UserRepository
 
     public function saveUser(User $user)
     {
+
         $sql = "INSERT INTO users (id, username, email, password, age, created_at)
                 VALUES (:id, :username, :email, :password, :age, :created_at)";
 
         try {
+            $existEmail = $this->findByEmail($user->getEmail());
+            if($existEmail === null){
+                throw new RuntimeException("Email does not exist");
+            }
+
             $stmt = $this->pdo->prepare($sql);
 
-            $result = $stmt->execute([
+            return $stmt->execute([
                 ':id' => $user->getId(),
                 ':username' => $user->getUsername(),
                 ':email' => $user->getEmail(),
@@ -35,9 +41,6 @@ final class UserRepository
                 ':age' => $user->getAge(),
                 ':created_at' => $user->getCreatedAt()->format('Y-m-d H:i:s')
             ]);
-
-            return $result;
-
         } catch (PDOException $e) {
             error_log("Database error while saving user: " . $e->getMessage());
             throw new RuntimeException("Could not save the user.");
@@ -48,6 +51,7 @@ final class UserRepository
      *
      * @return \Generator<int, User>
      */
+    // this function return the active users
     public function getAllUsers(): \Generator
     {
         $batchSize = 100;
@@ -58,6 +62,7 @@ final class UserRepository
 
                     $sql = "SELECT id, username, password, age, email, created_at, updated_at, deleted_at 
                             FROM users 
+                            WHERE deleted_at IS NULL
                             ORDER BY id ASC 
                             LIMIT :limit";
                     $stmt = $this->pdo->prepare($sql);
@@ -65,7 +70,7 @@ final class UserRepository
                 } else {
                     $sql = "SELECT id, username, password, age, email, created_at, updated_at, deleted_at 
                             FROM users 
-                            WHERE id > :last_id 
+                            WHERE id > :last_id AND deleted_at IS NULL
                             ORDER BY id ASC 
                             LIMIT :limit";
                     $stmt = $this->pdo->prepare($sql);
@@ -129,10 +134,6 @@ final class UserRepository
 
     public function updateUser(User $user): bool
     {
-        if ($user == null) {
-            error_log("Database error while updating user: " . $user->getId());
-            throw new RuntimeException("User id is not set.");
-        }
         $sql = "UPDATE users 
                 SET username = :username, 
                     email = :email, 

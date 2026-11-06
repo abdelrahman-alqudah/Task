@@ -17,13 +17,22 @@ final class AuthService{
     }
     public function register(RegisterDto $dto): string {
 
+        if(trim($dto->email) === ""){
+            throw new RuntimeException("Email cannot be empty");
+        }
+
+        $user = $this->userRepository->findByEmail($dto->email);
+        if ($user !== null) {
+            throw new RuntimeException('Email already exists');
+        }
+
         $hashedPassword = password_hash($dto->password, PASSWORD_DEFAULT);
 
         $user = new User(
           username: $dto->username,
           passwordHash: $hashedPassword,
-          email: $dto->email,
           age: $dto->age,
+          email: $dto->email,
           createdAt: new DateTimeImmutable()
         );
         $saved = $this->userRepository->saveUser($user);
